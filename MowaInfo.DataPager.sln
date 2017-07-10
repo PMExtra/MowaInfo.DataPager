@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{081A7EF5-C7D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MowaInfo.DataPager", "src\MowaInfo.DataPager.csproj", "{27DD524E-BD44-4E5C-A374-A04BF30C9565}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F5356599-F60F-4ACA-BC63-69258FD5173E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MowaInfo.DataPager.Tests", "test\MowaInfo.DataPager.Tests\MowaInfo.DataPager.Tests.csproj", "{26DB0C02-BE19-4F9F-B215-586F5EEB4580}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,11 +21,16 @@ Global
 		{27DD524E-BD44-4E5C-A374-A04BF30C9565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27DD524E-BD44-4E5C-A374-A04BF30C9565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27DD524E-BD44-4E5C-A374-A04BF30C9565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DB0C02-BE19-4F9F-B215-586F5EEB4580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26DB0C02-BE19-4F9F-B215-586F5EEB4580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DB0C02-BE19-4F9F-B215-586F5EEB4580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26DB0C02-BE19-4F9F-B215-586F5EEB4580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{27DD524E-BD44-4E5C-A374-A04BF30C9565} = {081A7EF5-C7D9-4FC4-B54C-819F83ED90C1}
+		{26DB0C02-BE19-4F9F-B215-586F5EEB4580} = {F5356599-F60F-4ACA-BC63-69258FD5173E}
 	EndGlobalSection
 EndGlobal
