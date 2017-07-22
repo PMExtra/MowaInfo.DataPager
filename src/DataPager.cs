@@ -99,7 +99,11 @@ namespace MowaInfo.DataPager
                 }
                 else
                 {
-                    source = source.Where(QueryGenerator.WherePredict(name, comparator), kvp.Value);
+                    var predict = QueryGenerator.WherePredict(name, comparator);
+                    if (predict != null)
+                    {
+                        source = source.Where(predict, kvp.Value);
+                    }
                 }
             }
 
