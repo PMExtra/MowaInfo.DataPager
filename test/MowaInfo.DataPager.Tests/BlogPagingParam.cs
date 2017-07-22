@@ -23,18 +23,14 @@ namespace MowaInfo.DataPager.Tests
         [PropertyFilter(Comparator = FilterComparator.LessThan)]
         public int? TimesLiked { get; set; }
 
-
         [PropertyFilter(Comparator = FilterComparator.LessOrEquals)]
         public int? TimesWatched { get; set; }
-
 
         [PropertyFilter(Comparator = FilterComparator.Unequals)]
         public string Url { get; set; }
 
-
         [PropertyFilter(Comparator = FilterComparator.Custom)]
         public string UserName { get; set; }
-
 
         [PropertyFilter(Comparator = FilterComparator.Default)]
         public string BlogType { get; set; }

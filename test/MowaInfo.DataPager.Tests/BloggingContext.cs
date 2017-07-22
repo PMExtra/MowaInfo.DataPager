@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 
 namespace MowaInfo.DataPager.Tests
 {
@@ -24,6 +25,7 @@ namespace MowaInfo.DataPager.Tests
         {
         }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         public BloggingContext(DbContextOptions<BloggingContext> options)
             : base(options)
         {

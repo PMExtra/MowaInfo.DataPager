@@ -19,7 +19,7 @@ namespace MowaInfo.DataPager.Tests
         }
     }
 
-    public class UnitTest1
+    public class BlogPagingTest
     {
         private readonly Compare _compare = new Compare();
 
