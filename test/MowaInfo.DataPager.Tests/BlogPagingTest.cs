@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -233,7 +233,7 @@ namespace MowaInfo.DataPager.Tests
             }
         }
 
-        // û��FilterComparator
+        // 没有FilterComparator
         [Fact]
         public void NoFilter()
         {
