@@ -31,7 +31,7 @@ namespace MowaInfo.DataPager.Dynamic
             var lambda = DynamicExpressionParser.ParseLambda(createParameterCtor, source.ElementType, typeof(bool),
                 predicate, args);
 
-            var optimized = OptimizeExpression(Expression.Call(typeof(Queryable), "Where", new[] {source.ElementType},
+            var optimized = OptimizeExpression(Expression.Call(typeof(Queryable), "Where", new[] { source.ElementType },
                 source.Expression, Expression.Quote(lambda)));
             return source.Provider.CreateQuery(optimized);
         }
@@ -41,7 +41,7 @@ namespace MowaInfo.DataPager.Dynamic
         {
             var lambda = DynamicExpressionParser.ParseLambda(comparator, source.ElementType, typeof(bool), name, args);
 
-            var optimized = OptimizeExpression(Expression.Call(typeof(Queryable), "Where", new[] {source.ElementType},
+            var optimized = OptimizeExpression(Expression.Call(typeof(Queryable), "Where", new[] { source.ElementType },
                 source.Expression, Expression.Quote(lambda)));
             return source.Provider.CreateQuery(optimized);
         }

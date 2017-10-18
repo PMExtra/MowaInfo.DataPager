@@ -8,14 +8,14 @@ namespace MowaInfo.DataPager.Dynamic
         public static LambdaExpression ParseLambda(bool createParameterCtor, Type itType, Type resultType,
             string expression, params object[] values)
         {
-            return ParseLambda(createParameterCtor, new[] {Expression.Parameter(itType, "")}, resultType, expression,
+            return ParseLambda(createParameterCtor, new[] { Expression.Parameter(itType, "") }, resultType, expression,
                 values);
         }
 
         public static LambdaExpression ParseLambda(FilterComparator comparator, Type itType, Type resultType,
             string name, params object[] values)
         {
-            return ParseLambda(comparator, new[] {Expression.Parameter(itType, "")}, resultType, name, values);
+            return ParseLambda(comparator, new[] { Expression.Parameter(itType, "") }, resultType, name, values);
         }
 
         public static LambdaExpression ParseLambda(bool createParameterCtor, ParameterExpression[] parameters,

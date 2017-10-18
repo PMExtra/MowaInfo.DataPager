@@ -64,7 +64,7 @@ namespace MowaInfo.DataPager.Dynamic
         public static IOrderedQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> source, string ordering,
             params object[] args)
         {
-            return (IOrderedQueryable<TSource>) OrderBy((IQueryable) source, ordering, args);
+            return (IOrderedQueryable<TSource>)OrderBy((IQueryable)source, ordering, args);
         }
 
         /// <summary>
@@ -86,20 +86,22 @@ namespace MowaInfo.DataPager.Dynamic
         /// </example>
         public static IOrderedQueryable OrderBy(this IQueryable source, string ordering, params object[] args)
         {
-            ParameterExpression[] parameters = {Expression.Parameter(source.ElementType, "")};
+            ParameterExpression[] parameters = { Expression.Parameter(source.ElementType, "") };
             var parser = new ExpressionParser(parameters, ordering, args);
             var dynamicOrderings = parser.ParseOrdering();
 
             var queryExpr = source.Expression;
 
             foreach (var dynamicOrdering in dynamicOrderings)
+            {
                 queryExpr = Expression.Call(
                     typeof(Queryable), dynamicOrdering.MethodName,
-                    new[] {source.ElementType, dynamicOrdering.Selector.Type},
+                    new[] { source.ElementType, dynamicOrdering.Selector.Type },
                     queryExpr, Expression.Quote(Expression.Lambda(dynamicOrdering.Selector, parameters)));
+            }
 
             var optimized = OptimizeExpression(queryExpr);
-            return (IOrderedQueryable) source.Provider.CreateQuery(optimized);
+            return (IOrderedQueryable)source.Provider.CreateQuery(optimized);
         }
 
         #endregion OrderBy

@@ -334,6 +334,44 @@ namespace MowaInfo.DataPager.Tests
             }
         }
 
+        //Test int[] Equal
+        [Fact]
+        public void Test12()
+        {
+            Init("Test12");
+            using (var context = new BloggingContext(_options))
+            {
+                var param = new BlogPagingParam
+                {
+                    Page = 1,
+                    Descending = new[] { true },
+                    PageSize = 2,
+                    Test = new[] { 1, 2 }
+                };
+                var a = context.Blogs.AsNoTracking()
+                    .Page(param);
+                Assert.Equal(a.Total, 6);
+                // ReSharper disable once GenericEnumeratorNotDisposed
+                var one = a.Data.GetEnumerator();
+                one.MoveNext();
+                var cur = one.Current;
+                Assert.Equal(cur, new Blog
+                {
+                    BlogId = 2,
+                    Url = "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    BlogTitle = "bbbbbbbbbbbbbbbbbbb",
+                    BlogType = "c",
+                    UserId = 1,
+                    UserName = "d",
+                    PublishTime = cur.PublishTime,
+                    TimesWatched = 10,
+                    TimesLiked = 2,
+                    Gift = 1,
+                    Test = 1
+                }, _compare);
+            }
+        }
+
         // TimesLiked  LessThan
         [Fact]
         public void TimesLikedLessThan()
@@ -520,44 +558,6 @@ namespace MowaInfo.DataPager.Tests
                     TimesLiked = 0,
                     Gift = 0,
                     Test = 0
-                }, _compare);
-            }
-        }
-
-        //Test int[] Equal
-        [Fact]
-        public void Test12()
-        {
-            Init("Test12");
-            using (var context = new BloggingContext(_options))
-            {
-                var param = new BlogPagingParam
-                {
-                    Page = 1,
-                    Descending = new[] { true },
-                    PageSize = 2,
-                    Test = new []{1, 2}
-                };
-                var a = context.Blogs.AsNoTracking()
-                    .Page(param);
-                Assert.Equal(a.Total, 6);
-                // ReSharper disable once GenericEnumeratorNotDisposed
-                var one = a.Data.GetEnumerator();
-                one.MoveNext();
-                var cur = one.Current;
-                Assert.Equal(cur, new Blog
-                {
-                    BlogId = 2,
-                    Url = "aaaaaaaaaaaaaaaaaaaaaaaaaa",
-                    BlogTitle = "bbbbbbbbbbbbbbbbbbb",
-                    BlogType = "c",
-                    UserId = 1,
-                    UserName = "d",
-                    PublishTime = cur.PublishTime,
-                    TimesWatched = 10,
-                    TimesLiked = 2,
-                    Gift = 1,
-                    Test = 1
                 }, _compare);
             }
         }

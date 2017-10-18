@@ -47,8 +47,12 @@ namespace MowaInfo.DataPager.Dynamic.CustomTypeProviders
                 }
 
                 if (definedTypes != null)
+                {
                     foreach (var definedType in definedTypes)
+                    {
                         yield return definedType;
+                    }
+                }
             }
         }
     }

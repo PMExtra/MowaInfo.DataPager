@@ -25,40 +25,40 @@ namespace MowaInfo.DataPager.Dynamic
         // These shorthands have different name than actual type and therefore not recognized by default from the _predefinedTypes
         private static readonly Dictionary<string, Type> _predefinedTypesShorthands = new Dictionary<string, Type>
         {
-            {"int", typeof(int)},
-            {"uint", typeof(uint)},
-            {"short", typeof(short)},
-            {"ushort", typeof(ushort)},
-            {"long", typeof(long)},
-            {"ulong", typeof(ulong)},
-            {"bool", typeof(bool)},
-            {"float", typeof(float)}
+            { "int", typeof(int) },
+            { "uint", typeof(uint) },
+            { "short", typeof(short) },
+            { "ushort", typeof(ushort) },
+            { "long", typeof(long) },
+            { "ulong", typeof(ulong) },
+            { "bool", typeof(bool) },
+            { "float", typeof(float) }
         };
 
         private static readonly Dictionary<Type, int> _predefinedTypes = new Dictionary<Type, int>
         {
-            {typeof(object), 0},
-            {typeof(bool), 0},
-            {typeof(char), 0},
-            {typeof(string), 0},
-            {typeof(sbyte), 0},
-            {typeof(byte), 0},
-            {typeof(short), 0},
-            {typeof(ushort), 0},
-            {typeof(int), 0},
-            {typeof(uint), 0},
-            {typeof(long), 0},
-            {typeof(ulong), 0},
-            {typeof(float), 0},
-            {typeof(double), 0},
-            {typeof(decimal), 0},
-            {typeof(DateTime), 0},
-            {typeof(DateTimeOffset), 0},
-            {typeof(TimeSpan), 0},
-            {typeof(Guid), 0},
-            {typeof(Math), 0},
-            {typeof(Convert), 0},
-            {typeof(Uri), 0}
+            { typeof(object), 0 },
+            { typeof(bool), 0 },
+            { typeof(char), 0 },
+            { typeof(string), 0 },
+            { typeof(sbyte), 0 },
+            { typeof(byte), 0 },
+            { typeof(short), 0 },
+            { typeof(ushort), 0 },
+            { typeof(int), 0 },
+            { typeof(uint), 0 },
+            { typeof(long), 0 },
+            { typeof(ulong), 0 },
+            { typeof(float), 0 },
+            { typeof(double), 0 },
+            { typeof(decimal), 0 },
+            { typeof(DateTime), 0 },
+            { typeof(DateTimeOffset), 0 },
+            { typeof(TimeSpan), 0 },
+            { typeof(Guid), 0 },
+            { typeof(Math), 0 },
+            { typeof(Convert), 0 },
+            { typeof(Uri), 0 }
         };
 
         private static readonly Expression TrueLiteral = Expression.Constant(true);
@@ -91,17 +91,23 @@ namespace MowaInfo.DataPager.Dynamic
         public ExpressionParser(ParameterExpression[] parameters, string expression, object[] values)
         {
             if (_keywords == null)
+            {
                 _keywords = CreateKeywords();
+            }
 
             _symbols = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _internals = new Dictionary<string, object>();
             _literals = new Dictionary<Expression, string>();
 
             if (parameters != null)
+            {
                 ProcessParameters(parameters);
+            }
 
             if (values != null)
+            {
                 ProcessValues(values);
+            }
 
             _textParser = new TextParser(expression);
         }
@@ -112,7 +118,9 @@ namespace MowaInfo.DataPager.Dynamic
             {
                 var efType = Type.GetType(typeName);
                 if (efType != null)
+                {
                     _predefinedTypes.Add(efType, x);
+                }
             }
             catch
             {
@@ -123,7 +131,9 @@ namespace MowaInfo.DataPager.Dynamic
         private void ProcessParameters(ParameterExpression[] parameters)
         {
             foreach (var pe in parameters.Where(p => !string.IsNullOrEmpty(p.Name)))
+            {
                 AddSymbol(pe.Name, pe);
+            }
 
             // If there is only 1 ParameterExpression, do also allow access using 'it'
             if (parameters.Length == 1)
@@ -132,7 +142,9 @@ namespace MowaInfo.DataPager.Dynamic
                 _it = parameters[0];
 
                 if (_root == null)
+                {
                     _root = _it;
+                }
             }
         }
 
@@ -144,16 +156,22 @@ namespace MowaInfo.DataPager.Dynamic
                 IDictionary<string, object> externals;
 
                 if (i == values.Length - 1 && (externals = value as IDictionary<string, object>) != null)
+                {
                     _externals = externals;
+                }
                 else
+                {
                     AddSymbol("@" + i.ToString(CultureInfo.InvariantCulture), value);
+                }
             }
         }
 
         private void AddSymbol(string name, object value)
         {
             if (_symbols.ContainsKey(name))
+            {
                 throw ParseError(Res.DuplicateIdentifier, name);
+            }
 
             _symbols.Add(name, value);
         }
@@ -167,8 +185,12 @@ namespace MowaInfo.DataPager.Dynamic
             var expr = ParseConditionalOperator();
 
             if (resultType != null)
+            {
                 if ((expr = PromoteExpression(expr, resultType, true, false)) == null)
+                {
                     throw ParseError(exprPos, Res.ExpressionTypeMismatch, GetTypeName(resultType));
+                }
+            }
 
             _textParser.ValidateToken(TokenId.End, Res.SyntaxError);
 
@@ -195,14 +217,20 @@ namespace MowaInfo.DataPager.Dynamic
 
                 string methodName;
                 if (forceThenBy || orderings.Count > 0)
+                {
                     methodName = ascending ? methodThenBy : methodThenByDescending;
+                }
                 else
+                {
                     methodName = ascending ? methodOrderBy : methodOrderByDescending;
+                }
 
-                orderings.Add(new DynamicOrdering {Selector = expr, Ascending = ascending, MethodName = methodName});
+                orderings.Add(new DynamicOrdering { Selector = expr, Ascending = ascending, MethodName = methodName });
 
                 if (_textParser.CurrentToken.Id != TokenId.Comma)
+                {
                     break;
+                }
 
                 _textParser.NextToken();
             }
@@ -253,7 +281,7 @@ namespace MowaInfo.DataPager.Dynamic
                     _textParser.CurrentToken.Id == TokenId.OpenParen)
                 {
                     var right = ParseConditionalOperator();
-                    return Expression.Lambda(right, (ParameterExpression) expr);
+                    return Expression.Lambda(right, (ParameterExpression)expr);
                 }
                 _textParser.ValidateToken(TokenId.OpenParen, Res.OpenParenExpected);
             }
@@ -267,7 +295,9 @@ namespace MowaInfo.DataPager.Dynamic
             _textParser.NextToken();
             var args = ParseArgumentList();
             if (args.Length != 2)
+            {
                 throw ParseError(errorPos, Res.IsNullRequiresTwoArgs);
+            }
 
             return Expression.Coalesce(args[0], args[1]);
         }
@@ -326,19 +356,29 @@ namespace MowaInfo.DataPager.Dynamic
 
                         // if the identifier is an Enum, try to convert the right-side also to an Enum.
                         if (left.Type.GetTypeInfo().IsEnum && right is ConstantExpression)
+                        {
                             right = ParseEnumToConstantExpression(op.Pos, left.Type, right as ConstantExpression);
+                        }
 
                         // else, check for direct type match
                         else if (left.Type != right.Type)
+                        {
                             CheckAndPromoteOperands(typeof(IEqualitySignatures), "==", ref left, ref right, op.Pos);
+                        }
 
                         if (accumulate.Type != typeof(bool))
+                        {
                             accumulate = GenerateEqual(left, right);
+                        }
                         else
+                        {
                             accumulate = Expression.OrElse(accumulate, GenerateEqual(left, right));
+                        }
 
                         if (_textParser.CurrentToken.Id == TokenId.End)
+                        {
                             throw ParseError(op.Pos, Res.CloseParenOrCommaExpected);
+                        }
                     }
                 }
                 else if (_textParser.CurrentToken.Id == TokenId.Identifier) //a single argument
@@ -346,17 +386,21 @@ namespace MowaInfo.DataPager.Dynamic
                     var right = ParsePrimary();
 
                     if (!typeof(IEnumerable).IsAssignableFrom(right.Type))
+                    {
                         throw ParseError(_textParser.CurrentToken.Pos, Res.IdentifierImplementingInterfaceExpected,
                             typeof(IEnumerable));
+                    }
 
-                    var args = new[] {left};
+                    var args = new[] { left };
 
                     MethodBase containsSignature;
                     if (FindMethod(typeof(IEnumerableSignatures), "Contains", false, args, out containsSignature) != 1)
+                    {
                         throw ParseError(op.Pos, Res.NoApplicableAggregate, "Contains");
+                    }
 
-                    var typeArgs = new[] {left.Type};
-                    args = new[] {right, left};
+                    var typeArgs = new[] { left.Type };
+                    args = new[] { right, left };
 
                     accumulate = Expression.Call(typeof(Enumerable), containsSignature.Name, typeArgs, args);
                 }
@@ -382,10 +426,14 @@ namespace MowaInfo.DataPager.Dynamic
                 var right = ParseComparisonOperator();
 
                 if (left.Type.GetTypeInfo().IsEnum)
+                {
                     left = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
+                }
 
                 if (right.Type.GetTypeInfo().IsEnum)
+                {
                     right = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
+                }
 
                 switch (op.Id)
                 {
@@ -437,12 +485,20 @@ namespace MowaInfo.DataPager.Dynamic
                                    left.Type == typeof(Guid) && right.Type == typeof(Guid)))
                 {
                     if (left.Type != right.Type)
+                    {
                         if (left.Type.IsAssignableFrom(right.Type))
+                        {
                             right = Expression.Convert(right, left.Type);
+                        }
                         else if (right.Type.IsAssignableFrom(left.Type))
+                        {
                             left = Expression.Convert(left, right.Type);
+                        }
                         else
+                        {
                             throw IncompatibleOperandsError(op.Text, left, right, op.Pos);
+                        }
+                    }
                 }
                 else if (IsEnumType(left.Type) || IsEnumType(right.Type))
                 {
@@ -450,27 +506,37 @@ namespace MowaInfo.DataPager.Dynamic
                     {
                         Expression e;
                         if ((e = PromoteExpression(right, left.Type, true, false)) != null)
+                        {
                             right = e;
+                        }
                         else if ((e = PromoteExpression(left, right.Type, true, false)) != null)
+                        {
                             left = e;
+                        }
                         else if (IsEnumType(left.Type) && (constantExpr = right as ConstantExpression) != null)
+                        {
                             right = ParseEnumToConstantExpression(op.Pos, left.Type, constantExpr);
+                        }
                         else if (IsEnumType(right.Type) && (constantExpr = left as ConstantExpression) != null)
+                        {
                             left = ParseEnumToConstantExpression(op.Pos, right.Type, constantExpr);
+                        }
                         else
+                        {
                             throw IncompatibleOperandsError(op.Text, left, right, op.Pos);
+                        }
                     }
                 }
                 else if ((constantExpr = right as ConstantExpression) != null && constantExpr.Value is string &&
                          (typeConverter = TypeConverterFactory.GetConverter(left.Type)) != null)
                 {
-                    right = Expression.Constant(typeConverter.ConvertFromInvariantString((string) constantExpr.Value),
+                    right = Expression.Constant(typeConverter.ConvertFromInvariantString((string)constantExpr.Value),
                         left.Type);
                 }
                 else if ((constantExpr = left as ConstantExpression) != null && constantExpr.Value is string &&
                          (typeConverter = TypeConverterFactory.GetConverter(right.Type)) != null)
                 {
-                    left = Expression.Constant(typeConverter.ConvertFromInvariantString((string) constantExpr.Value),
+                    left = Expression.Constant(typeConverter.ConvertFromInvariantString((string)constantExpr.Value),
                         right.Type);
                 }
                 else
@@ -480,17 +546,23 @@ namespace MowaInfo.DataPager.Dynamic
                     {
                         var interfaces = left.Type.GetInterfaces().Where(x => x.GetTypeInfo().IsGenericType);
                         if (isEquality)
+                        {
                             typesAreSameAndImplementCorrectInterface = interfaces.Any(x =>
                                 x.GetGenericTypeDefinition() == typeof(IEquatable<>));
+                        }
                         else
+                        {
                             typesAreSameAndImplementCorrectInterface = interfaces.Any(x =>
                                 x.GetGenericTypeDefinition() == typeof(IComparable<>));
+                        }
                     }
 
                     if (!typesAreSameAndImplementCorrectInterface)
+                    {
                         CheckAndPromoteOperands(
                             isEquality ? typeof(IEqualitySignatures) : typeof(IRelationalSignatures), op.Text, ref left,
                             ref right, op.Pos);
+                    }
                 }
 
                 switch (op.Id)
@@ -532,7 +604,9 @@ namespace MowaInfo.DataPager.Dynamic
             try
             {
                 if (constantExpr.Value is string)
-                    return Enum.Parse(GetNonNullableType(leftType), (string) constantExpr.Value, true);
+                {
+                    return Enum.Parse(GetNonNullableType(leftType), (string)constantExpr.Value, true);
+                }
 
                 return Enum.ToObject(leftType, constantExpr.Value);
             }
@@ -664,6 +738,7 @@ namespace MowaInfo.DataPager.Dynamic
         {
             var expr = ParsePrimaryStart();
             while (true)
+            {
                 if (_textParser.CurrentToken.Id == TokenId.Dot)
                 {
                     _textParser.NextToken();
@@ -682,6 +757,7 @@ namespace MowaInfo.DataPager.Dynamic
                 {
                     break;
                 }
+            }
             return expr;
         }
 
@@ -713,7 +789,9 @@ namespace MowaInfo.DataPager.Dynamic
             if (quote == '\'')
             {
                 if (s.Length != 1)
+                {
                     throw ParseError(Res.InvalidCharacterLiteral);
+                }
                 _textParser.NextToken();
                 return CreateLiteral(s[0], s);
             }
@@ -731,8 +809,8 @@ namespace MowaInfo.DataPager.Dynamic
             var isHexadecimal =
                 text.StartsWith(text[0] == '-' ? "-0x" : "0x", StringComparison.CurrentCultureIgnoreCase);
             var qualifierLetters = isHexadecimal
-                ? new[] {'U', 'u', 'L', 'l'}
-                : new[] {'U', 'u', 'L', 'l', 'F', 'f', 'D', 'd', 'M', 'm'};
+                ? new[] { 'U', 'u', 'L', 'l' }
+                : new[] { 'U', 'u', 'L', 'l', 'F', 'f', 'D', 'd', 'M', 'm' };
 
             if (qualifierLetters.Contains(last))
             {
@@ -749,62 +827,80 @@ namespace MowaInfo.DataPager.Dynamic
             if (text[0] != '-')
             {
                 if (isHexadecimal)
+                {
                     text = text.Substring(2);
+                }
 
                 ulong value;
                 if (!ulong.TryParse(text, isHexadecimal ? NumberStyles.HexNumber : NumberStyles.Integer,
                     CultureInfo.CurrentCulture, out value))
+                {
                     throw ParseError(Res.InvalidIntegerLiteral, text);
+                }
 
                 _textParser.NextToken();
                 if (!string.IsNullOrEmpty(qualifier))
                 {
-                    if (qualifier == "U" || qualifier == "u") return CreateLiteral((uint) value, text);
-                    if (qualifier == "L" || qualifier == "l") return CreateLiteral((long) value, text);
+                    if (qualifier == "U" || qualifier == "u") return CreateLiteral((uint)value, text);
+                    if (qualifier == "L" || qualifier == "l") return CreateLiteral((long)value, text);
 
                     // in case of UL, just return
                     return CreateLiteral(value, text);
                 }
 
                 // if (value <= (int)short.MaxValue) return CreateLiteral((short)value, text);
-                if (value <= int.MaxValue) return CreateLiteral((int) value, text);
-                if (value <= uint.MaxValue) return CreateLiteral((uint) value, text);
-                if (value <= long.MaxValue) return CreateLiteral((long) value, text);
+                if (value <= int.MaxValue) return CreateLiteral((int)value, text);
+                if (value <= uint.MaxValue) return CreateLiteral((uint)value, text);
+                if (value <= long.MaxValue) return CreateLiteral((long)value, text);
 
                 return CreateLiteral(value, text);
             }
             else
             {
                 if (isHexadecimal)
+                {
                     text = text.Substring(3);
+                }
 
                 long value;
                 if (!long.TryParse(text, isHexadecimal ? NumberStyles.HexNumber : NumberStyles.Integer,
                     CultureInfo.CurrentCulture, out value))
+                {
                     throw ParseError(Res.InvalidIntegerLiteral, text);
+                }
 
                 if (isHexadecimal)
+                {
                     value = -value;
+                }
 
                 _textParser.NextToken();
                 if (!string.IsNullOrEmpty(qualifier))
                 {
                     if (qualifier == "L" || qualifier == "l")
+                    {
                         return CreateLiteral(value, text);
+                    }
 
                     if (qualifier == "F" || qualifier == "f")
+                    {
                         return TryParseAsFloat(text, qualifier[0]);
+                    }
 
                     if (qualifier == "D" || qualifier == "d")
+                    {
                         return TryParseAsDouble(text, qualifier[0]);
+                    }
 
                     if (qualifier == "M" || qualifier == "m")
+                    {
                         return TryParseAsDecimal(text, qualifier[0]);
+                    }
 
                     throw ParseError(Res.MinusCannotBeAppliedToUnsignedInteger);
                 }
 
-                if (value <= int.MaxValue) return CreateLiteral((int) value, text);
+                if (value <= int.MaxValue) return CreateLiteral((int)value, text);
 
                 return CreateLiteral(value, text);
             }
@@ -828,7 +924,9 @@ namespace MowaInfo.DataPager.Dynamic
                 float f;
                 if (float.TryParse(text.Substring(0, text.Length - 1), NumberStyles.Float, CultureInfo.InvariantCulture,
                     out f))
+                {
                     return CreateLiteral(f, text);
+                }
             }
 
             // not possible to find float qualifier, so try to parse as double
@@ -842,7 +940,9 @@ namespace MowaInfo.DataPager.Dynamic
                 decimal d;
                 if (decimal.TryParse(text.Substring(0, text.Length - 1), NumberStyles.Number,
                     CultureInfo.InvariantCulture, out d))
+                {
                     return CreateLiteral(d, text);
+                }
             }
 
             // not possible to find float qualifier, so try to parse as double
@@ -853,12 +953,18 @@ namespace MowaInfo.DataPager.Dynamic
         {
             double d;
             if (qualifier == 'D' || qualifier == 'd')
+            {
                 if (double.TryParse(text.Substring(0, text.Length - 1), NumberStyles.Number,
                     CultureInfo.InvariantCulture, out d))
+                {
                     return CreateLiteral(d, text);
+                }
+            }
 
             if (double.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out d))
+            {
                 return CreateLiteral(d, text);
+            }
 
             throw ParseError(Res.InvalidRealLiteral, text);
         }
@@ -902,7 +1008,7 @@ namespace MowaInfo.DataPager.Dynamic
 
                 _textParser.NextToken();
 
-                return (Expression) value;
+                return (Expression)value;
             }
 
             if (_symbols.TryGetValue(_textParser.CurrentToken.Text, out value) ||
@@ -926,7 +1032,9 @@ namespace MowaInfo.DataPager.Dynamic
             }
 
             if (_it != null)
+            {
                 return ParseMemberAccess(null, _it);
+            }
 
             throw ParseError(Res.UnknownIdentifier, _textParser.CurrentToken.Text);
         }
@@ -934,7 +1042,9 @@ namespace MowaInfo.DataPager.Dynamic
         private Expression ParseIt()
         {
             if (_it == null)
+            {
                 throw ParseError(Res.NoItInScope);
+            }
             _textParser.NextToken();
             return _it;
         }
@@ -942,7 +1052,9 @@ namespace MowaInfo.DataPager.Dynamic
         private Expression ParseParent()
         {
             if (_parent == null)
+            {
                 throw ParseError(Res.NoParentInScope);
+            }
             _textParser.NextToken();
             return _parent;
         }
@@ -950,7 +1062,9 @@ namespace MowaInfo.DataPager.Dynamic
         private Expression ParseRoot()
         {
             if (_root == null)
+            {
                 throw ParseError(Res.NoRootInScope);
+            }
             _textParser.NextToken();
             return _root;
         }
@@ -961,7 +1075,9 @@ namespace MowaInfo.DataPager.Dynamic
             _textParser.NextToken();
             var args = ParseArgumentList();
             if (args.Length != 3)
+            {
                 throw ParseError(errorPos, Res.IifRequiresThreeArgs);
+            }
 
             return GenerateConditional(args[0], args[1], args[2], errorPos);
         }
@@ -969,7 +1085,9 @@ namespace MowaInfo.DataPager.Dynamic
         private Expression GenerateConditional(Expression test, Expression expr1, Expression expr2, int errorPos)
         {
             if (test.Type != typeof(bool))
+            {
                 throw ParseError(errorPos, Res.FirstExprMustBeBool);
+            }
             if (expr1.Type != expr2.Type)
             {
                 var expr1As2 = expr2 != NullLiteral ? PromoteExpression(expr1, expr2.Type, true, false) : null;
@@ -987,7 +1105,9 @@ namespace MowaInfo.DataPager.Dynamic
                     var type1 = expr1 != NullLiteral ? expr1.Type.Name : "null";
                     var type2 = expr2 != NullLiteral ? expr2.Type.Name : "null";
                     if (expr1As2 != null)
+                    {
                         throw ParseError(errorPos, Res.BothTypesConvertToOther, type1, type2);
+                    }
 
                     throw ParseError(errorPos, Res.NeitherTypeConvertsToOther, type1, type2);
                 }
@@ -1003,7 +1123,9 @@ namespace MowaInfo.DataPager.Dynamic
                 _textParser.CurrentToken.Id != TokenId.OpenCurlyParen &&
                 _textParser.CurrentToken.Id != TokenId.OpenBracket &&
                 _textParser.CurrentToken.Id != TokenId.Identifier)
+            {
                 throw ParseError(Res.OpenParenOrIdentifierExpected);
+            }
 
             Type newType = null;
             if (_textParser.CurrentToken.Id == TokenId.Identifier)
@@ -1011,12 +1133,16 @@ namespace MowaInfo.DataPager.Dynamic
                 var newTypeName = _textParser.CurrentToken.Text;
                 newType = FindType(newTypeName);
                 if (newType == null)
+                {
                     throw ParseError(_textParser.CurrentToken.Pos, Res.TypeNotFound, newTypeName);
+                }
                 _textParser.NextToken();
                 if (_textParser.CurrentToken.Id != TokenId.OpenParen &&
                     _textParser.CurrentToken.Id != TokenId.OpenBracket &&
                     _textParser.CurrentToken.Id != TokenId.OpenCurlyParen)
+                {
                     throw ParseError(Res.OpenParenExpected);
+                }
             }
 
             var arrayInitializer = false;
@@ -1059,18 +1185,24 @@ namespace MowaInfo.DataPager.Dynamic
                 expressions.Add(expr);
 
                 if (_textParser.CurrentToken.Id != TokenId.Comma)
+                {
                     break;
+                }
 
                 _textParser.NextToken();
             }
 
             if (_textParser.CurrentToken.Id != TokenId.CloseParen &&
                 _textParser.CurrentToken.Id != TokenId.CloseCurlyParen)
+            {
                 throw ParseError(Res.CloseParenOrCommaExpected);
+            }
             _textParser.NextToken();
 
             if (arrayInitializer)
+            {
                 return CreateArrayInitializerExpression(expressions, newType);
+            }
 
             return CreateNewExpression(properties, expressions, newType);
         }
@@ -1078,12 +1210,16 @@ namespace MowaInfo.DataPager.Dynamic
         private Expression CreateArrayInitializerExpression(List<Expression> expressions, Type newType)
         {
             if (expressions.Count == 0)
+            {
                 return Expression.NewArrayInit(newType ?? typeof(object));
+            }
 
             if (newType != null)
+            {
                 return Expression.NewArrayInit(
                     newType,
                     expressions.Select(expression => PromoteExpression(expression, newType, true, true)));
+            }
 
             return Expression.NewArrayInit(
                 expressions.All(expression => expression.Type == expressions[0].Type)
@@ -1132,11 +1268,15 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             var propertyTypes = type.GetProperties().Select(p => p.PropertyType).ToArray();
             var ctor = type.GetConstructor(propertyTypes);
             if (ctor != null)
+            {
                 return Expression.New(ctor, expressions);
+            }
 
             var bindings = new MemberBinding[properties.Count];
             for (var i = 0; i < bindings.Length; i++)
+            {
                 bindings[i] = Expression.Bind(type.GetProperty(properties[i].Name), expressions[i]);
+            }
             return Expression.MemberInit(Expression.New(type), bindings);
         }
 
@@ -1147,7 +1287,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             var args = ParseArgumentList();
             MethodBase method;
             if (FindMethod(lambda.Type, "Invoke", false, args, out method) != 1)
+            {
                 throw ParseError(errorPos, Res.ArgsIncompatibleWithLambda);
+            }
 
             return Expression.Invoke(lambda, args);
         }
@@ -1160,7 +1302,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             if (_textParser.CurrentToken.Id == TokenId.Question)
             {
                 if (!type.GetTypeInfo().IsValueType || IsNullableType(type))
+                {
                     throw ParseError(errorPos, Res.TypeHasNoNullableForm, GetTypeName(type));
+                }
 
                 type = typeof(Nullable<>).MakeGenericType(type);
                 _textParser.NextToken();
@@ -1170,7 +1314,7 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             var shorthand = _textParser.CurrentToken.Id == TokenId.StringLiteral;
             if (_textParser.CurrentToken.Id == TokenId.OpenParen || shorthand)
             {
-                var args = shorthand ? new[] {ParseStringLiteral()} : ParseArgumentList();
+                var args = shorthand ? new[] { ParseStringLiteral() } : ParseArgumentList();
 
                 // If only 1 argument, and if the type is a ValueType and argType is also a ValueType, just Convert
                 if (args.Length == 1)
@@ -1178,7 +1322,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                     var argType = args[0].Type;
 
                     if (type.GetTypeInfo().IsValueType && IsNullableType(type) && argType.GetTypeInfo().IsValueType)
+                    {
                         return Expression.Convert(args[0], type);
+                    }
                 }
 
                 MethodBase method;
@@ -1186,12 +1332,14 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 {
                     case 0:
                         if (args.Length == 1)
+                        {
                             return GenerateConversion(args[0], type, errorPos);
+                        }
 
                         throw ParseError(errorPos, Res.NoMatchingConstructor, GetTypeName(type));
 
                     case 1:
-                        return Expression.New((ConstructorInfo) method, args);
+                        return Expression.New((ConstructorInfo)method, args);
 
                     default:
                         throw ParseError(errorPos, Res.AmbiguousConstructorInvocation, GetTypeName(type));
@@ -1208,38 +1356,50 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         {
             var exprType = expr.Type;
             if (exprType == type)
+            {
                 return expr;
+            }
 
             if (exprType.GetTypeInfo().IsValueType && type.GetTypeInfo().IsValueType)
             {
                 if ((IsNullableType(exprType) || IsNullableType(type)) &&
                     GetNonNullableType(exprType) == GetNonNullableType(type))
+                {
                     return Expression.Convert(expr, type);
+                }
 
                 if ((IsNumericType(exprType) || IsEnumType(exprType)) && IsNumericType(type) || IsEnumType(type))
+                {
                     return Expression.ConvertChecked(expr, type);
+                }
             }
 
             if (exprType.IsAssignableFrom(type) || type.IsAssignableFrom(exprType) ||
                 exprType.GetTypeInfo().IsInterface || type.GetTypeInfo().IsInterface)
+            {
                 return Expression.Convert(expr, type);
+            }
 
             // Try to Parse the string rather that just generate the convert statement
             if (expr.NodeType == ExpressionType.Constant && exprType == typeof(string))
             {
-                var text = (string) ((ConstantExpression) expr).Value;
+                var text = (string)((ConstantExpression)expr).Value;
 
                 // DateTime is parsed as UTC time.
                 DateTime dateTime;
                 if (type == typeof(DateTime) && DateTime.TryParse(text, CultureInfo.InvariantCulture,
                         DateTimeStyles.None, out dateTime))
+                {
                     return Expression.Constant(dateTime, type);
+                }
 
-                object[] arguments = {text, null};
-                var method = type.GetMethod("TryParse", new[] {typeof(string), type.MakeByRefType()});
+                object[] arguments = { text, null };
+                var method = type.GetMethod("TryParse", new[] { typeof(string), type.MakeByRefType() });
                 //MethodInfo method = type.GetMethod("TryParse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string), type.MakeByRefType() }, null);
-                if (method != null && (bool) method.Invoke(null, arguments))
+                if (method != null && (bool)method.Invoke(null, arguments))
+                {
                     return Expression.Constant(arguments[1], type);
+                }
             }
 
             throw ParseError(errorPos, Res.CannotConvertValue, GetTypeName(exprType), GetTypeName(type));
@@ -1248,7 +1408,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private Expression ParseMemberAccess(Type type, Expression instance)
         {
             if (instance != null)
+            {
                 type = instance.Type;
+            }
 
             var errorPos = _textParser.CurrentToken.Pos;
             var id = GetIdentifier();
@@ -1274,13 +1436,17 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                         throw ParseError(errorPos, Res.NoApplicableMethod, id, GetTypeName(type));
 
                     case 1:
-                        var method = (MethodInfo) mb;
+                        var method = (MethodInfo)mb;
                         if (!IsPredefinedType(method.DeclaringType) &&
                             !(method.IsPublic && IsPredefinedType(method.ReturnType)))
+                        {
                             throw ParseError(errorPos, Res.MethodsAreInaccessible, GetTypeName(method.DeclaringType));
+                        }
 
                         if (method.ReturnType == typeof(void))
+                        {
                             throw ParseError(errorPos, Res.MethodIsVoid, id, GetTypeName(method.DeclaringType));
+                        }
 
                         return Expression.Call(instance, method, args);
 
@@ -1319,9 +1485,11 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
             var property = member as PropertyInfo;
             if (property != null)
+            {
                 return Expression.Property(instance, property);
+            }
 
-            return Expression.Field(instance, (FieldInfo) member);
+            return Expression.Field(instance, (FieldInfo)member);
         }
 
         private static Type FindGenericType(Type generic, Type type)
@@ -1329,14 +1497,18 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             while (type != null && type != typeof(object))
             {
                 if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == generic)
+                {
                     return type;
+                }
 
                 if (generic.GetTypeInfo().IsInterface)
+                {
                     foreach (var intfType in type.GetInterfaces())
                     {
                         var found = FindGenericType(generic, intfType);
                         if (found != null) return found;
                     }
+                }
 
                 type = type.GetTypeInfo().BaseType;
             }
@@ -1350,19 +1522,33 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             _keywords.TryGetValue(name, out type);
             var result = type as Type;
             if (result != null)
+            {
                 return result;
+            }
             if (_it != null && _it.Type.Name == name)
+            {
                 return _it.Type;
+            }
             if (_parent != null && _parent.Type.Name == name)
+            {
                 return _parent.Type;
+            }
             if (_root != null && _root.Type.Name == name)
+            {
                 return _root.Type;
+            }
             if (_it != null && _it.Type.Namespace + "." + _it.Type.Name == name)
+            {
                 return _it.Type;
+            }
             if (_parent != null && _parent.Type.Namespace + "." + _parent.Type.Name == name)
+            {
                 return _parent.Type;
+            }
             if (_root != null && _root.Type.Namespace + "." + _root.Type.Name == name)
+            {
                 return _root.Type;
+            }
             return null;
         }
 
@@ -1376,9 +1562,13 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             _parent = _it;
 
             if (methodName == "Contains" || methodName == "Skip" || methodName == "Take")
+            {
                 _it = outerIt;
+            }
             else
+            {
                 _it = innerIt;
+            }
 
             var args = ParseArgumentList();
 
@@ -1387,47 +1577,57 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
             MethodBase signature;
             if (FindMethod(typeof(IEnumerableSignatures), methodName, false, args, out signature) != 1)
+            {
                 throw ParseError(errorPos, Res.NoApplicableAggregate, methodName);
+            }
 
             Type[] typeArgs;
-            if (new[] {"Min", "Max", "Select", "OrderBy", "OrderByDescending", "ThenBy", "ThenByDescending", "GroupBy"}
+            if (new[] { "Min", "Max", "Select", "OrderBy", "OrderByDescending", "ThenBy", "ThenByDescending", "GroupBy" }
                 .Contains(signature.Name))
             {
                 if (args.Length == 2)
-                    typeArgs = new[] {elementType, args[0].Type, args[1].Type};
+                {
+                    typeArgs = new[] { elementType, args[0].Type, args[1].Type };
+                }
                 else
-                    typeArgs = new[] {elementType, args[0].Type};
+                {
+                    typeArgs = new[] { elementType, args[0].Type };
+                }
             }
             else if (signature.Name == "SelectMany")
             {
                 var type = Expression.Lambda(args[0], innerIt).Body.Type;
-                var interfaces = type.GetInterfaces().Union(new[] {type});
+                var interfaces = type.GetInterfaces().Union(new[] { type });
                 var interfaceType = interfaces.Single(i => i.Name == typeof(IEnumerable<>).Name);
                 var resultType = interfaceType.GetTypeInfo().GetGenericTypeArguments()[0];
-                typeArgs = new[] {elementType, resultType};
+                typeArgs = new[] { elementType, resultType };
             }
             else
             {
-                typeArgs = new[] {elementType};
+                typeArgs = new[] { elementType };
             }
 
             if (args.Length == 0)
             {
-                args = new[] {instance};
+                args = new[] { instance };
             }
             else
             {
-                if (new[] {"Contains", "Take", "Skip", "DefaultIfEmpty"}.Contains(signature.Name))
+                if (new[] { "Contains", "Take", "Skip", "DefaultIfEmpty" }.Contains(signature.Name))
                 {
-                    args = new[] {instance, args[0]};
+                    args = new[] { instance, args[0] };
                 }
                 else
                 {
                     if (args.Length == 2)
+                    {
                         args = new[]
-                            {instance, Expression.Lambda(args[0], innerIt), Expression.Lambda(args[1], innerIt)};
+                            { instance, Expression.Lambda(args[0], innerIt), Expression.Lambda(args[1], innerIt) };
+                    }
                     else
-                        args = new[] {instance, Expression.Lambda(args[0], innerIt)};
+                    {
+                        args = new[] { instance, Expression.Lambda(args[0], innerIt) };
+                    }
                 }
             }
 
@@ -1452,7 +1652,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 argList.Add(ParseConditionalOperator());
 
                 if (_textParser.CurrentToken.Id != TokenId.Comma)
+                {
                     break;
+                }
 
                 _textParser.NextToken();
             }
@@ -1471,10 +1673,14 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             if (expr.Type.IsArray)
             {
                 if (expr.Type.GetArrayRank() != 1 || args.Length != 1)
+                {
                     throw ParseError(errorPos, Res.CannotIndexMultiDimArray);
+                }
                 var index = PromoteExpression(args[0], typeof(int), true, false);
                 if (index == null)
+                {
                     throw ParseError(errorPos, Res.InvalidIndex);
+                }
                 return Expression.ArrayIndex(expr, index);
             }
             MethodBase mb;
@@ -1484,7 +1690,7 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                     throw ParseError(errorPos, Res.NoApplicableIndexer,
                         GetTypeName(expr.Type));
                 case 1:
-                    return Expression.Call(expr, (MethodInfo) mb, args);
+                    return Expression.Call(expr, (MethodInfo)mb, args);
                 default:
                     throw ParseError(errorPos, Res.AmbiguousIndexerInvocation,
                         GetTypeName(expr.Type));
@@ -1496,7 +1702,10 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             if (_predefinedTypes.ContainsKey(type)) return true;
 
             if (GlobalConfig.CustomTypeProvider != null &&
-                GlobalConfig.CustomTypeProvider.GetCustomTypes().Contains(type)) return true;
+                GlobalConfig.CustomTypeProvider.GetCustomTypes().Contains(type))
+            {
+                return true;
+            }
 
             return false;
         }
@@ -1509,7 +1718,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         public static Type ToNullableType(Type type)
         {
             if (!type.GetTypeInfo().IsValueType || IsNullableType(type))
+            {
                 throw ParseError(-1, Res.TypeHasNoNullableForm, GetTypeName(type));
+            }
 
             return typeof(Nullable<>).MakeGenericType(type);
         }
@@ -1543,7 +1754,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression == null && expression.NodeType == ExpressionType.Coalesce)
+            {
                 memberExpression = (expression as BinaryExpression).Left as MemberExpression;
+            }
 
             if (memberExpression != null)
             {
@@ -1593,11 +1806,17 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             if (type.GetTypeInfo().IsEnum) return 0;
 
             if (type == typeof(char) || type == typeof(float) || type == typeof(double) || type == typeof(decimal))
+            {
                 return 1;
+            }
             if (type == typeof(sbyte) || type == typeof(short) || type == typeof(int) || type == typeof(long))
+            {
                 return 2;
+            }
             if (type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong))
+            {
                 return 3;
+            }
             return 0;
         }
 
@@ -1608,11 +1827,13 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
         private void CheckAndPromoteOperand(Type signatures, string opName, ref Expression expr, int errorPos)
         {
-            Expression[] args = {expr};
+            Expression[] args = { expr };
 
             MethodBase method;
             if (FindMethod(signatures, "F", false, args, out method) != 1)
+            {
                 throw IncompatibleOperandError(opName, expr, errorPos);
+            }
 
             expr = args[0];
         }
@@ -1620,11 +1841,13 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private void CheckAndPromoteOperands(Type signatures, string opName, ref Expression left, ref Expression right,
             int errorPos)
         {
-            Expression[] args = {left, right};
+            Expression[] args = { left, right };
 
             MethodBase method;
             if (FindMethod(signatures, "F", false, args, out method) != 1)
+            {
                 throw IncompatibleOperandsError(opName, left, right, errorPos);
+            }
 
             left = args[0];
             right = args[1];
@@ -1650,13 +1873,17 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 MemberInfo member = t.GetTypeInfo().DeclaredProperties
                     .FirstOrDefault(x => x.Name.ToLowerInvariant() == memberName.ToLowerInvariant());
                 if (member != null)
+                {
                     return member;
+                }
 
                 // If no property is found, try to get a field with the specified memberName
                 member = t.GetTypeInfo().DeclaredFields.FirstOrDefault(x =>
                     (x.IsStatic || !staticAccess) && x.Name.ToLowerInvariant() == memberName.ToLowerInvariant());
                 if (member != null)
+                {
                     return member;
+                }
 
                 // No property or field is found, try the base type.
             }
@@ -1691,7 +1918,7 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 if (members.Length != 0)
                 {
                     var methods = members
-                        .OfType<PropertyInfo>().Select(p => (MethodBase) p.GetMethod);
+                        .OfType<PropertyInfo>().Select(p => (MethodBase)p.GetMethod);
 
                     var count = FindBestMethod(methods, args, out method);
                     if (count != 0) return count;
@@ -1732,15 +1959,19 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
         private int FindBestMethod(IEnumerable<MethodBase> methods, Expression[] args, out MethodBase method)
         {
-            var applicable = methods.Select(m => new MethodData {MethodBase = m, Parameters = m.GetParameters()})
+            var applicable = methods.Select(m => new MethodData { MethodBase = m, Parameters = m.GetParameters() })
                 .Where(m => IsApplicable(m, args)).ToArray();
 
             if (applicable.Length > 1)
+            {
                 applicable = applicable.Where(m => applicable.All(n => m == n || IsBetterThan(args, m, n))).ToArray();
+            }
 
             if (args.Length == 2 && applicable.Length > 1 &&
                 (args[0].Type == typeof(Guid?) || args[1].Type == typeof(Guid?)))
+            {
                 applicable = applicable.Take(1).ToArray();
+            }
 
             if (applicable.Length == 1)
             {
@@ -1776,15 +2007,20 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private Expression PromoteExpression(Expression expr, Type type, bool exact, bool convertExpr)
         {
             if (expr.Type == type)
+            {
                 return expr;
+            }
 
             var ce = expr as ConstantExpression;
 
             if (ce != null)
+            {
                 if (ce == NullLiteral || ce.Value == null)
                 {
                     if (!type.GetTypeInfo().IsValueType || IsNullableType(type))
+                    {
                         return Expression.Constant(null, type);
+                    }
                 }
                 else
                 {
@@ -1801,7 +2037,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
                             // Make sure an enum value stays an enum value
                             if (target.GetTypeInfo().IsEnum)
+                            {
                                 value = Enum.ToObject(target, value);
+                            }
                         }
                         else if (ce.Type == typeof(double))
                         {
@@ -1812,14 +2050,19 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                             value = ParseEnum(text, target);
                         }
                         if (value != null)
+                        {
                             return Expression.Constant(value, type);
+                        }
                     }
                 }
+            }
 
             if (IsCompatibleWith(expr.Type, type))
             {
                 if (type.GetTypeInfo().IsValueType || exact || expr.Type.GetTypeInfo().IsValueType && convertExpr)
+                {
                     return Expression.Convert(expr, type);
+                }
 
                 return expr;
             }
@@ -1891,7 +2134,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static object ParseEnum(string value, Type type)
         {
             if (type.GetTypeInfo().IsEnum)
+            {
                 return Enum.Parse(type, value, true);
+            }
             return null;
         }
 
@@ -1909,57 +2154,77 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             {
                 if (tc == typeof(sbyte) || tc == typeof(short) || tc == typeof(int) || tc == typeof(long) ||
                     tc == typeof(float) || tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(byte))
             {
                 if (tc == typeof(byte) || tc == typeof(short) || tc == typeof(ushort) || tc == typeof(int) ||
                     tc == typeof(uint) || tc == typeof(long) || tc == typeof(ulong) || tc == typeof(float) ||
                     tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(short))
             {
                 if (tc == typeof(short) || tc == typeof(int) || tc == typeof(long) || tc == typeof(float) ||
                     tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(ushort))
             {
                 if (tc == typeof(ushort) || tc == typeof(int) || tc == typeof(uint) || tc == typeof(long) ||
                     tc == typeof(ulong) || tc == typeof(float) || tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(int))
             {
                 if (tc == typeof(int) || tc == typeof(long) || tc == typeof(float) || tc == typeof(double) ||
                     tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(uint))
             {
                 if (tc == typeof(uint) || tc == typeof(long) || tc == typeof(ulong) || tc == typeof(float) ||
                     tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(long))
             {
                 if (tc == typeof(long) || tc == typeof(float) || tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(ulong))
             {
                 if (tc == typeof(ulong) || tc == typeof(float) || tc == typeof(double) || tc == typeof(decimal))
+                {
                     return true;
+                }
             }
             else if (sc == typeof(float))
             {
                 if (tc == typeof(float) || tc == typeof(double))
+                {
                     return true;
+                }
             }
 
             if (st == tt)
+            {
                 return true;
+            }
             return false;
         }
 
@@ -1973,15 +2238,21 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
                 // If second is better, return false
                 if (result == CompareConversionType.Second)
+                {
                     return false;
+                }
 
                 // If first is better, return true
                 if (result == CompareConversionType.First)
+                {
                     return true;
+                }
 
                 // If both are same, just set better to true and continue
                 if (result == CompareConversionType.Both)
+                {
                     better = true;
+                }
             }
 
             return better;
@@ -2023,7 +2294,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateGreaterThan(Expression left, Expression right)
         {
             if (left.Type == typeof(string))
+            {
                 return Expression.GreaterThan(GenerateStaticMethodCall("Compare", left, right), Expression.Constant(0));
+            }
 
             if (left.Type.GetTypeInfo().IsEnum || right.Type.GetTypeInfo().IsEnum)
             {
@@ -2042,15 +2315,19 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateGreaterThanEqual(Expression left, Expression right)
         {
             if (left.Type == typeof(string))
+            {
                 return Expression.GreaterThanOrEqual(GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0));
+            }
 
             if (left.Type.GetTypeInfo().IsEnum || right.Type.GetTypeInfo().IsEnum)
+            {
                 return Expression.GreaterThanOrEqual(
                     left.Type.GetTypeInfo().IsEnum ? Expression.Convert(left, Enum.GetUnderlyingType(left.Type)) : left,
                     right.Type.GetTypeInfo().IsEnum
                         ? Expression.Convert(right, Enum.GetUnderlyingType(right.Type))
                         : right);
+            }
 
             return Expression.GreaterThanOrEqual(left, right);
         }
@@ -2058,14 +2335,18 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateLessThan(Expression left, Expression right)
         {
             if (left.Type == typeof(string))
+            {
                 return Expression.LessThan(GenerateStaticMethodCall("Compare", left, right), Expression.Constant(0));
+            }
 
             if (left.Type.GetTypeInfo().IsEnum || right.Type.GetTypeInfo().IsEnum)
+            {
                 return Expression.LessThan(
                     left.Type.GetTypeInfo().IsEnum ? Expression.Convert(left, Enum.GetUnderlyingType(left.Type)) : left,
                     right.Type.GetTypeInfo().IsEnum
                         ? Expression.Convert(right, Enum.GetUnderlyingType(right.Type))
                         : right);
+            }
 
             return Expression.LessThan(left, right);
         }
@@ -2073,15 +2354,19 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateLessThanEqual(Expression left, Expression right)
         {
             if (left.Type == typeof(string))
+            {
                 return Expression.LessThanOrEqual(GenerateStaticMethodCall("Compare", left, right),
                     Expression.Constant(0));
+            }
 
             if (left.Type.GetTypeInfo().IsEnum || right.Type.GetTypeInfo().IsEnum)
+            {
                 return Expression.LessThanOrEqual(
                     left.Type.GetTypeInfo().IsEnum ? Expression.Convert(left, Enum.GetUnderlyingType(left.Type)) : left,
                     right.Type.GetTypeInfo().IsEnum
                         ? Expression.Convert(right, Enum.GetUnderlyingType(right.Type))
                         : right);
+            }
 
             return Expression.LessThanOrEqual(left, right);
         }
@@ -2089,7 +2374,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateAdd(Expression left, Expression right)
         {
             if (left.Type == typeof(string) && right.Type == typeof(string))
+            {
                 return GenerateStaticMethodCall("Concat", left, right);
+            }
             return Expression.Add(left, right);
         }
 
@@ -2101,18 +2388,18 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         private static Expression GenerateStringConcat(Expression left, Expression right)
         {
             // Allow concat String with something else
-            return Expression.Call(null, typeof(string).GetMethod("Concat", new[] {left.Type, right.Type}),
-                new[] {left, right});
+            return Expression.Call(null, typeof(string).GetMethod("Concat", new[] { left.Type, right.Type }),
+                new[] { left, right });
         }
 
         private static MethodInfo GetStaticMethod(string methodName, Expression left, Expression right)
         {
-            return left.Type.GetMethod(methodName, new[] {left.Type, right.Type});
+            return left.Type.GetMethod(methodName, new[] { left.Type, right.Type });
         }
 
         private static Expression GenerateStaticMethodCall(string methodName, Expression left, Expression right)
         {
-            return Expression.Call(null, GetStaticMethod(methodName, left, right), new[] {left, right});
+            return Expression.Call(null, GetStaticMethod(methodName, left, right), new[] { left, right });
         }
 
         private static void OptimizeForEqualityIfPossible(ref Expression left, ref Expression right)
@@ -2125,12 +2412,16 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             var rightType = right.Type;
 
             if (rightType == typeof(string) && right.NodeType == ExpressionType.Constant)
-                right = OptimizeStringForEqualityIfPossible((string) ((ConstantExpression) right).Value, leftType) ??
+            {
+                right = OptimizeStringForEqualityIfPossible((string)((ConstantExpression)right).Value, leftType) ??
                         right;
+            }
 
             if (leftType == typeof(string) && left.NodeType == ExpressionType.Constant)
-                left = OptimizeStringForEqualityIfPossible((string) ((ConstantExpression) left).Value, rightType) ??
+            {
+                left = OptimizeStringForEqualityIfPossible((string)((ConstantExpression)left).Value, rightType) ??
                        left;
+            }
         }
 
         private static Expression OptimizeStringForEqualityIfPossible(string text, Type type)
@@ -2139,10 +2430,14 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
             if (type == typeof(DateTime) &&
                 DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            {
                 return Expression.Constant(dateTime, typeof(DateTime));
+            }
             Guid guid;
             if (type == typeof(Guid) && Guid.TryParse(text, out guid))
+            {
                 return Expression.Constant(guid, typeof(Guid));
+            }
             return null;
         }
 
@@ -2174,9 +2469,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
         {
             var d = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
             {
-                {"true", TrueLiteral},
-                {"false", FalseLiteral},
-                {"null", NullLiteral}
+                { "true", TrueLiteral },
+                { "false", FalseLiteral },
+                { "null", NullLiteral }
             };
 
             if (GlobalConfig.AreContextKeywordsEnabled)
@@ -2200,14 +2495,18 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             }
 
             foreach (var pair in _predefinedTypesShorthands)
+            {
                 d.Add(pair.Key, pair.Value);
+            }
 
             if (GlobalConfig.CustomTypeProvider != null)
+            {
                 foreach (var type in GlobalConfig.CustomTypeProvider.GetCustomTypes())
                 {
                     d[type.FullName] = type;
                     d[type.Name] = type;
                 }
+            }
 
             return d;
         }
@@ -2221,7 +2520,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             ref Expression right)
         {
             if (left.Type == right.Type)
+            {
                 return;
+            }
 
             if (left.Type == typeof(ulong) || right.Type == typeof(ulong))
             {
@@ -2266,23 +2567,31 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             var it = parameters[0];
             Type type = null;
             if (it != null)
+            {
                 type = it.Type;
+            }
             var member = FindPropertyOrField(type, name, it == null);
             Expression expr = null;
             var property = member as PropertyInfo;
             if (property != null)
+            {
                 expr = Expression.Property(it, property);
+            }
             var args = new List<Expression>();
             foreach (var t in values)
+            {
                 if (!(t is Expression expression))
                 {
                     expression = Expression.Constant(t);
                     args.Add(expression);
                 }
+            }
             type = expr.Type;
             var argsArray = args.ToArray();
             if (argsArray.Length == 0)
+            {
                 throw new ArgumentNullException(nameof(argsArray), "");
+            }
             if (argsArray.Length == 1 || property.PropertyType == typeof(string))
             {
                 switch (comparator)
@@ -2350,13 +2659,17 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                     throw new ParseException(Res.NoApplicableMethod);
 
                 case 1:
-                    var method = (MethodInfo) mb;
+                    var method = (MethodInfo)mb;
                     if (!IsPredefinedType(method.DeclaringType) &&
                         !(method.IsPublic && IsPredefinedType(method.ReturnType)))
+                    {
                         throw new ParseException(Res.MethodsAreInaccessible);
+                    }
 
                     if (method.ReturnType == typeof(void))
+                    {
                         throw new ParseException(Res.MethodIsVoid);
+                    }
 
                     return Expression.Call(instance, method, args);
 
@@ -2375,12 +2688,20 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                                left.Type == typeof(Guid) && right.Type == typeof(Guid)))
             {
                 if (left.Type != right.Type)
+                {
                     if (left.Type.IsAssignableFrom(right.Type))
+                    {
                         right = Expression.Convert(right, left.Type);
+                    }
                     else if (right.Type.IsAssignableFrom(left.Type))
+                    {
                         left = Expression.Convert(left, right.Type);
+                    }
                     else
+                    {
                         throw IncompatibleOperandsError("", left, right, -1);
+                    }
+                }
             }
             else if (IsEnumType(left.Type) || IsEnumType(right.Type))
             {
@@ -2388,27 +2709,37 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 {
                     Expression e;
                     if ((e = PromoteExpression(right, left.Type, true, false)) != null)
+                    {
                         right = e;
+                    }
                     else if ((e = PromoteExpression(left, right.Type, true, false)) != null)
+                    {
                         left = e;
+                    }
                     else if (IsEnumType(left.Type) && (constantExpr = right as ConstantExpression) != null)
+                    {
                         right = ParseEnumToConstantExpression(left.Type, constantExpr);
+                    }
                     else if (IsEnumType(right.Type) && (constantExpr = left as ConstantExpression) != null)
+                    {
                         left = ParseEnumToConstantExpression(right.Type, constantExpr);
+                    }
                     else
+                    {
                         throw IncompatibleOperandsError("", left, right, -1);
+                    }
                 }
             }
             else if ((constantExpr = right as ConstantExpression) != null && constantExpr.Value is string &&
                      (typeConverter = TypeConverterFactory.GetConverter(left.Type)) != null)
             {
-                right = Expression.Constant(typeConverter.ConvertFromInvariantString((string) constantExpr.Value),
+                right = Expression.Constant(typeConverter.ConvertFromInvariantString((string)constantExpr.Value),
                     left.Type);
             }
             else if ((constantExpr = left as ConstantExpression) != null && constantExpr.Value is string &&
                      (typeConverter = TypeConverterFactory.GetConverter(right.Type)) != null)
             {
-                left = Expression.Constant(typeConverter.ConvertFromInvariantString((string) constantExpr.Value),
+                left = Expression.Constant(typeConverter.ConvertFromInvariantString((string)constantExpr.Value),
                     right.Type);
             }
             else
@@ -2418,16 +2749,22 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
                 {
                     var interfaces = left.Type.GetInterfaces().Where(x => x.GetTypeInfo().IsGenericType);
                     if (isEquality)
+                    {
                         typesAreSameAndImplementCorrectInterface =
                             interfaces.Any(x => x.GetGenericTypeDefinition() == typeof(IEquatable<>));
+                    }
                     else
+                    {
                         typesAreSameAndImplementCorrectInterface =
                             interfaces.Any(x => x.GetGenericTypeDefinition() == typeof(IComparable<>));
+                    }
                 }
 
                 if (!typesAreSameAndImplementCorrectInterface)
+                {
                     CheckAndPromoteOperands(isEquality ? typeof(IEqualitySignatures) : typeof(IRelationalSignatures),
                         ref left, ref right);
+                }
             }
 
             switch (comparator)
@@ -2464,7 +2801,9 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
             try
             {
                 if (constantExpr.Value is string)
-                    return Enum.Parse(GetNonNullableType(leftType), (string) constantExpr.Value, true);
+                {
+                    return Enum.Parse(GetNonNullableType(leftType), (string)constantExpr.Value, true);
+                }
 
                 return Enum.ToObject(leftType, constantExpr.Value);
             }
@@ -2476,11 +2815,13 @@ Expression.NewArrayInit(typeof(KeyValuePair<string, object>), arrayIndexParams);
 
         private void CheckAndPromoteOperands(Type signatures, ref Expression left, ref Expression right)
         {
-            Expression[] args = {left, right};
+            Expression[] args = { left, right };
 
             MethodBase method;
             if (FindMethod(signatures, "F", false, args, out method) != 1)
+            {
                 throw ParseError("", left, right, -1);
+            }
 
             left = args[0];
             right = args[1];

@@ -12,17 +12,17 @@ namespace MowaInfo.DataPager.Dynamic
         // As an addition it is compatible with the OData.Filter specification
         private static readonly Dictionary<string, TokenId> _predefinedAliases = new Dictionary<string, TokenId>
         {
-            {"eq", TokenId.Equal},
-            {"ne", TokenId.ExclamationEqual},
-            {"neq", TokenId.ExclamationEqual},
-            {"lt", TokenId.LessThan},
-            {"le", TokenId.LessThanEqual},
-            {"gt", TokenId.GreaterThan},
-            {"ge", TokenId.GreaterThanEqual},
-            {"and", TokenId.DoubleAmphersand},
-            {"or", TokenId.DoubleBar},
-            {"not", TokenId.Exclamation},
-            {"mod", TokenId.Percent}
+            { "eq", TokenId.Equal },
+            { "ne", TokenId.ExclamationEqual },
+            { "neq", TokenId.ExclamationEqual },
+            { "lt", TokenId.LessThan },
+            { "le", TokenId.LessThanEqual },
+            { "gt", TokenId.GreaterThan },
+            { "ge", TokenId.GreaterThanEqual },
+            { "and", TokenId.DoubleAmphersand },
+            { "or", TokenId.DoubleBar },
+            { "not", TokenId.Exclamation },
+            { "mod", TokenId.Percent }
         };
 
         private readonly string _text;
@@ -55,7 +55,9 @@ namespace MowaInfo.DataPager.Dynamic
         public void NextToken()
         {
             while (char.IsWhiteSpace(_ch))
+            {
                 NextChar();
+            }
 
             var tokenId = TokenId.Unknown;
             var tokenPos = _textPos;
@@ -268,7 +270,9 @@ namespace MowaInfo.DataPager.Dynamic
                         } while (_textPos < _textLen && (_ch != quote || escaped));
 
                         if (_textPos == _textLen)
+                        {
                             throw ParseError(_textPos, Res.UnterminatedStringLiteral);
+                        }
 
                         NextChar();
                     } while (_ch == quote);
@@ -312,16 +316,25 @@ namespace MowaInfo.DataPager.Dynamic
                         {
                             NextChar();
                             if (_ch == 'L')
-                                if (_text[_textPos - 1] == 'U') NextChar();
+                            {
+                                if (_text[_textPos - 1] == 'U')
+                                {
+                                    NextChar();
+                                }
                                 else
+                                {
                                     throw ParseError(_textPos, Res.InvalidIntegerQualifier,
                                         _text.Substring(_textPos - 1, 2));
+                                }
+                            }
                             ValidateExpression();
                             break;
                         }
 
                         if (hexInteger)
+                        {
                             break;
+                        }
 
                         if (_ch == NumberDecimalSeparator)
                         {
@@ -411,11 +424,13 @@ namespace MowaInfo.DataPager.Dynamic
         private static bool IsHexChar(char c)
         {
             if (char.IsDigit(c))
+            {
                 return true;
+            }
 
             if (c <= '\x007f')
             {
-                c |= (char) 0x20;
+                c |= (char)0x20;
                 return c >= 'a' && c <= 'f';
             }
 

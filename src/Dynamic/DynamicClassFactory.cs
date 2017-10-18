@@ -32,8 +32,8 @@ namespace MowaInfo.DataPager.Dynamic
 
         private static readonly CustomAttributeBuilder DebuggerBrowsableAttributeBuilder =
             new CustomAttributeBuilder(
-                typeof(DebuggerBrowsableAttribute).GetConstructor(new[] {typeof(DebuggerBrowsableState)}),
-                new object[] {DebuggerBrowsableState.Never});
+                typeof(DebuggerBrowsableAttribute).GetConstructor(new[] { typeof(DebuggerBrowsableState) }),
+                new object[] { DebuggerBrowsableState.Never });
 
         private static readonly CustomAttributeBuilder DebuggerHiddenAttributeBuilder =
             new CustomAttributeBuilder(typeof(DebuggerHiddenAttribute).GetConstructor(EmptyTypes), new object[0]);
@@ -47,10 +47,10 @@ namespace MowaInfo.DataPager.Dynamic
         private static readonly ConstructorInfo StringBuilderCtor = typeof(StringBuilder).GetConstructor(EmptyTypes);
 
         private static readonly MethodInfo StringBuilderAppendString =
-            typeof(StringBuilder).GetMethod("Append", new[] {typeof(string)});
+            typeof(StringBuilder).GetMethod("Append", new[] { typeof(string) });
 
         private static readonly MethodInfo StringBuilderAppendObject =
-            typeof(StringBuilder).GetMethod("Append", new[] {typeof(object)});
+            typeof(StringBuilder).GetMethod("Append", new[] { typeof(object) });
 
 
         private static readonly Type EqualityComparer = typeof(EqualityComparer<>);
@@ -60,10 +60,10 @@ namespace MowaInfo.DataPager.Dynamic
             EqualityComparer.GetMethod("get_Default", BindingFlags.Static | BindingFlags.Public);
 
         private static readonly MethodInfo EqualityComparerEquals = EqualityComparer.GetMethod("Equals",
-            new[] {EqualityComparerGenericArgument, EqualityComparerGenericArgument});
+            new[] { EqualityComparerGenericArgument, EqualityComparerGenericArgument });
 
         private static readonly MethodInfo EqualityComparerGetHashCode =
-            EqualityComparer.GetMethod("GetHashCode", new[] {EqualityComparerGenericArgument});
+            EqualityComparer.GetMethod("GetHashCode", new[] { EqualityComparerGenericArgument });
 
 
         private static int _index = -1;
@@ -120,6 +120,7 @@ namespace MowaInfo.DataPager.Dynamic
 
             Type type;
             if (!GeneratedTypes.TryGetValue(key, out type))
+            {
                 lock (GeneratedTypes)
                 {
                     if (!GeneratedTypes.TryGetValue(key, out type))
@@ -142,7 +143,9 @@ namespace MowaInfo.DataPager.Dynamic
                             var genericNames = names.Select(genericName => $"<{genericName}>j__TPar").ToArray();
                             generics = tb.DefineGenericParameters(genericNames);
                             foreach (var b in generics)
+                            {
                                 b.SetCustomAttribute(CompilerGeneratedAttributeBuilder);
+                            }
                         }
                         else
                         {
@@ -176,7 +179,7 @@ namespace MowaInfo.DataPager.Dynamic
                             // setter
                             var setter = tb.DefineMethod($"set_{names[i]}",
                                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName,
-                                CallingConventions.HasThis, null, new[] {generics[i].AsType()});
+                                CallingConventions.HasThis, null, new[] { generics[i].AsType() });
                             setter.SetCustomAttribute(CompilerGeneratedAttributeBuilder);
 
                             // workaround for https://github.com/dotnet/corefx/issues/7792
@@ -203,7 +206,7 @@ namespace MowaInfo.DataPager.Dynamic
                         // Equals
                         var equals = tb.DefineMethod("Equals",
                             MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.HideBySig,
-                            CallingConventions.HasThis, typeof(bool), new[] {typeof(object)});
+                            CallingConventions.HasThis, typeof(bool), new[] { typeof(object) });
                         equals.SetCustomAttribute(DebuggerHiddenAttributeBuilder);
                         equals.DefineParameter(1, ParameterAttributes.In, "value");
 
@@ -235,7 +238,9 @@ namespace MowaInfo.DataPager.Dynamic
                             var initHash = 0;
 
                             for (var i = 0; i < names.Length; i++)
+                            {
                                 initHash = unchecked(initHash * -1521134295 + fields[i].Name.GetHashCode());
+                            }
 
                             // Note that the CSC seems to generate a different seed for every anonymous class
                             ilgeneratorGetHashCode.Emit(OpCodes.Ldc_I4, initHash);
@@ -315,15 +320,25 @@ namespace MowaInfo.DataPager.Dynamic
                                 ilgeneratorConstructor.Emit(OpCodes.Ldarg_0);
 
                                 if (i == 0)
+                                {
                                     ilgeneratorConstructor.Emit(OpCodes.Ldarg_1);
+                                }
                                 else if (i == 1)
+                                {
                                     ilgeneratorConstructor.Emit(OpCodes.Ldarg_2);
+                                }
                                 else if (i == 2)
+                                {
                                     ilgeneratorConstructor.Emit(OpCodes.Ldarg_3);
+                                }
                                 else if (i < 255)
-                                    ilgeneratorConstructor.Emit(OpCodes.Ldarg_S, (byte) (i + 1));
+                                {
+                                    ilgeneratorConstructor.Emit(OpCodes.Ldarg_S, (byte)(i + 1));
+                                }
                                 else
-                                    ilgeneratorConstructor.Emit(OpCodes.Ldarg, unchecked((short) (i + 1)));
+                                {
+                                    ilgeneratorConstructor.Emit(OpCodes.Ldarg, unchecked((short)(i + 1)));
+                                }
 
                                 ilgeneratorConstructor.Emit(OpCodes.Stfld, fields[i]);
                             }
@@ -366,9 +381,12 @@ namespace MowaInfo.DataPager.Dynamic
                         type = GeneratedTypes.GetOrAdd(key, type);
                     }
                 }
+            }
 
             if (types.Length != 0)
+            {
                 type = type.MakeGenericType(types);
+            }
 
             return type;
         }

@@ -30,7 +30,9 @@ namespace MowaInfo.DataPager.Dynamic
                     {
                         var parameters = pi.GetIndexParameters().Length;
                         if (parameters > 0)
+                        {
                             continue;
+                        }
 
                         _propertiesDictionary.Add(pi.Name, pi.GetValue(this, null));
                     }
@@ -54,7 +56,9 @@ namespace MowaInfo.DataPager.Dynamic
             {
                 object result;
                 if (_properties.TryGetValue(name, out result))
+                {
                     return result;
+                }
 
                 return null;
             }
@@ -62,9 +66,13 @@ namespace MowaInfo.DataPager.Dynamic
             set
             {
                 if (_properties.ContainsKey(name))
+                {
                     _properties[name] = value;
+                }
                 else
+                {
                     _properties.Add(name, value);
+                }
             }
         }
 
@@ -79,7 +87,7 @@ namespace MowaInfo.DataPager.Dynamic
             var type = GetType();
             var propInfo = type.GetProperty(propertyName);
 
-            return (T) propInfo.GetValue(this, null);
+            return (T)propInfo.GetValue(this, null);
         }
 
         /// <summary>
@@ -180,9 +188,13 @@ namespace MowaInfo.DataPager.Dynamic
         {
             var name = binder.Name;
             if (_properties.ContainsKey(name))
+            {
                 _properties[name] = value;
+            }
             else
+            {
                 _properties.Add(name, value);
+            }
 
             return true;
         }

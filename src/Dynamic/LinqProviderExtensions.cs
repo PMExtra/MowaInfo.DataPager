@@ -22,6 +22,7 @@ namespace MowaInfo.DataPager.Dynamic
             var isLinqToObjects = baseType == typeof(EnumerableQuery);
 
             if (!isLinqToObjects)
+            {
                 try
                 {
                     var property = baseType.GetProperty("OriginalProvider");
@@ -32,6 +33,7 @@ namespace MowaInfo.DataPager.Dynamic
                 {
                     return false;
                 }
+            }
 
             return isLinqToObjects;
         }
