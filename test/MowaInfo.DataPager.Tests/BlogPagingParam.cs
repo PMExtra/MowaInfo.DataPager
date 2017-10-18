@@ -9,6 +9,9 @@ namespace MowaInfo.DataPager.Tests
         public int? BlogId { get; set; }
 
         [PropertyFilter(Comparator = FilterComparator.Equals)]
+        public int[] Test { get; set; }
+
+        [PropertyFilter(Comparator = FilterComparator.Equals)]
         public DateTime? PublishTime { get; set; }
 
         [PropertyFilter(Comparator = FilterComparator.Contains)]

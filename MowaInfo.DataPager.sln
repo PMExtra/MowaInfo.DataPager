@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{081A7EF5-C7D9-4FC4-B54C-819F83ED90C1}"
 EndProject
@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MowaInfo.DataPager", "src\M
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F5356599-F60F-4ACA-BC63-69258FD5173E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MowaInfo.DataPager.Tests", "test\MowaInfo.DataPager.Tests\MowaInfo.DataPager.Tests.csproj", "{26DB0C02-BE19-4F9F-B215-586F5EEB4580}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MowaInfo.DataPager.Tests", "test\MowaInfo.DataPager.Tests\MowaInfo.DataPager.Tests.csproj", "{26DB0C02-BE19-4F9F-B215-586F5EEB4580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,5 +32,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{27DD524E-BD44-4E5C-A374-A04BF30C9565} = {081A7EF5-C7D9-4FC4-B54C-819F83ED90C1}
 		{26DB0C02-BE19-4F9F-B215-586F5EEB4580} = {F5356599-F60F-4ACA-BC63-69258FD5173E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {174E5D9B-9465-4C5D-BBE6-8953E8E438E9}
 	EndGlobalSection
 EndGlobal

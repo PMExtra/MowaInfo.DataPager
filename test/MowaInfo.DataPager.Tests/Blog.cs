@@ -23,5 +23,7 @@ namespace MowaInfo.DataPager.Tests
         public int TimesLiked { get; set; }
 
         public int Gift { get; set; }
+
+        public int Test { get; set; }
     }
 }
