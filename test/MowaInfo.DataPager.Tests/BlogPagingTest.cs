@@ -47,7 +47,8 @@ namespace MowaInfo.DataPager.Tests
                         PublishTime = DateTime.Now,
                         TimesWatched = i * 10, //0,10,20,30,40
                         TimesLiked = i * 2, // 0, 2, 4, 6, 8
-                        Gift = i
+                        Gift = i,
+                        Test = i
                     });
                 }
                 for (var i = 0; i < 5; i++)
@@ -63,7 +64,8 @@ namespace MowaInfo.DataPager.Tests
                         PublishTime = DateTime.Now,
                         TimesWatched = 1 + i * 10, //01,11,21,31,41
                         TimesLiked = 1 + i * 2, // 1, 3, 5, 7, 9
-                        Gift = 1 + i
+                        Gift = 1 + i,
+                        Test = i
                     });
                 }
                 for (var i = 0; i < 5; i++)
@@ -79,7 +81,8 @@ namespace MowaInfo.DataPager.Tests
                         PublishTime = DateTime.Now,
                         TimesWatched = 2 + i * 10, //02,12,22,32,42
                         TimesLiked = 2 + i * 2, // 2, 4, 6, 8, 10
-                        Gift = 2 + i
+                        Gift = 2 + i,
+                        Test = i
                     });
                 }
             }
@@ -117,7 +120,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 20,
                     TimesLiked = 4,
-                    Gift = 2
+                    Gift = 2,
+                    Test = 2
                 }, _compare);
             }
         }
@@ -154,7 +158,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -191,7 +196,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -228,7 +234,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 41,
                     TimesLiked = 9,
-                    Gift = 5
+                    Gift = 5,
+                    Test = 4
                 }, _compare);
             }
         }
@@ -264,7 +271,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -289,7 +297,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = time,
                     TimesWatched = 162,
                     TimesLiked = 34,
-                    Gift = 18
+                    Gift = 18,
+                    Test = 16
                 });
             }
             using (var context = new BloggingContext(_options))
@@ -319,7 +328,48 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = time,
                     TimesWatched = 162,
                     TimesLiked = 34,
-                    Gift = 18
+                    Gift = 18,
+                    Test = 16
+                }, _compare);
+            }
+        }
+
+
+        //Test int[] Equal
+        [Fact]
+        public void Test12()
+        {
+            Init("Test12");
+            using (var context = new BloggingContext(_options))
+            {
+                var param = new BlogPagingParam
+                {
+                    Page = 1,
+                    Descending = new[] { true },
+                    PageSize = 2,
+                    Test = new[] { 1, 2 }
+                };
+
+                var a = context.Blogs.AsNoTracking()
+                    .Page(param);
+                Assert.Equal(a.Total, 6);
+                // ReSharper disable once GenericEnumeratorNotDisposed
+                var one = a.Data.GetEnumerator();
+                one.MoveNext();
+                var cur = one.Current;
+                Assert.Equal(cur, new Blog
+                {
+                    BlogId = 2,
+                    Url = "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    BlogTitle = "bbbbbbbbbbbbbbbbbbb",
+                    BlogType = "c",
+                    UserId = 1,
+                    UserName = "d",
+                    PublishTime = cur.PublishTime,
+                    TimesWatched = 10,
+                    TimesLiked = 2,
+                    Gift = 1,
+                    Test = 1
                 }, _compare);
             }
         }
@@ -356,7 +406,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -393,7 +444,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -430,7 +482,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }
@@ -467,7 +520,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 30,
                     TimesLiked = 6,
-                    Gift = 3
+                    Gift = 3,
+                    Test = 3
                 }, _compare);
             }
         }
@@ -504,7 +558,8 @@ namespace MowaInfo.DataPager.Tests
                     PublishTime = cur.PublishTime,
                     TimesWatched = 0,
                     TimesLiked = 0,
-                    Gift = 0
+                    Gift = 0,
+                    Test = 0
                 }, _compare);
             }
         }

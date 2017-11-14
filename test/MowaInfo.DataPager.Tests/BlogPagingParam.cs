@@ -35,6 +35,9 @@ namespace MowaInfo.DataPager.Tests
         [PropertyFilter(Comparator = FilterComparator.Default)]
         public string BlogType { get; set; }
 
+        [PropertyFilter(Comparator = FilterComparator.Equals)]
+        public int[] Test { get; set; }
+
         /// <summary>
         ///     自定义过滤器
         /// </summary>
