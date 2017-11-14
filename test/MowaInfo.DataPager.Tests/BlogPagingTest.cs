@@ -104,7 +104,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 1);
+                Assert.Equal(1, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -142,7 +142,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 10);
+                Assert.Equal(10, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -180,7 +180,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 10);
+                Assert.Equal(10, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -218,7 +218,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 3);
+                Assert.Equal(3, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -255,7 +255,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 15);
+                Assert.Equal(15, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -312,7 +312,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 1);
+                Assert.Equal(1, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -352,7 +352,7 @@ namespace MowaInfo.DataPager.Tests
 
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 6);
+                Assert.Equal(6, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -390,7 +390,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 8);
+                Assert.Equal(8, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -428,7 +428,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 8);
+                Assert.Equal(8, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -466,7 +466,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 10);
+                Assert.Equal(10, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -504,7 +504,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 6);
+                Assert.Equal(6, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
@@ -542,7 +542,7 @@ namespace MowaInfo.DataPager.Tests
                 };
                 var a = context.Blogs.AsNoTracking()
                     .Page(param);
-                Assert.Equal(a.Total, 15);
+                Assert.Equal(15, a.Total);
                 // ReSharper disable once GenericEnumeratorNotDisposed
                 var one = a.Data.GetEnumerator();
                 one.MoveNext();
