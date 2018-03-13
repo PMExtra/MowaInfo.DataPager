@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace MowaInfo.DataPager.Tests
+﻿namespace MowaInfo.DataPager.Tests
 {
     public class BlogService
     {
@@ -16,14 +13,6 @@ namespace MowaInfo.DataPager.Tests
         {
             _context.Blogs.Add(blog);
             _context.SaveChanges();
-        }
-
-        public IEnumerable<Blog> Find(string term)
-        {
-            return _context.Blogs
-                .Where(b => b.Url.Contains(term))
-                .OrderBy(b => b.Url)
-                .ToList();
         }
     }
 }
