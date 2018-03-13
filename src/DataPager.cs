@@ -14,11 +14,16 @@ namespace MowaInfo.DataPager
     {
         private static IQueryable<T> ParseParam<T>(this IQueryable<T> source, PagingParam param)
         {
-            return (IQueryable<T>)ParseParam((IQueryable)source, param);
+            return (IQueryable<T>) ParseParam((IQueryable) source, param);
         }
 
         private static IQueryable ParseParam(this IQueryable source, PagingParam param)
         {
+            if (param is SafePagingParam safeParam)
+            {
+                param.OrderBy = param.OrderBy.Where(field => safeParam.InternalOrderableFields.Contains(field)).ToArray();
+            }
+
             return source
                 .FilterBy(param)
                 .OrderBy(param.OrderBy, param.Descending);
@@ -56,7 +61,7 @@ namespace MowaInfo.DataPager
 
         public static IQueryable<T> FilterBy<T>(this IQueryable<T> source, PagingParam param)
         {
-            return (IQueryable<T>)FilterBy((IQueryable)source, param);
+            return (IQueryable<T>) FilterBy((IQueryable) source, param);
         }
 
         public static IQueryable FilterBy(this IQueryable source, PagingParam param)
@@ -114,7 +119,7 @@ namespace MowaInfo.DataPager
 
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string[] fields, bool[] descendings)
         {
-            return (IQueryable<T>)OrderBy((IQueryable)source, fields, descendings);
+            return (IQueryable<T>) OrderBy((IQueryable) source, fields, descendings);
         }
 
         public static IQueryable OrderBy(this IQueryable source, string[] fields, bool[] descendings)
@@ -123,6 +128,7 @@ namespace MowaInfo.DataPager
             {
                 return source;
             }
+
             var orders = new List<string>();
             for (var i = 0; i < fields.Length; i++)
             {
@@ -131,8 +137,10 @@ namespace MowaInfo.DataPager
                 {
                     field += " DESC";
                 }
+
                 orders.Add(field);
             }
+
             return source.OrderBy(string.Join(", ", orders));
         }
 
