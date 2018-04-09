@@ -86,6 +86,11 @@ namespace MowaInfo.DataPager
                 var comparator = filterAttribute.Comparator;
                 var sourceProperty = sourceProperties.FirstOrDefault(p => p.Name == name);
 
+                if (comparator == FilterComparator.Custom)
+                {
+                    continue;
+                }
+
                 if (sourceProperty == null)
                 {
                     throw new ArgumentException($"Could not found property `{name}` of queried type `{source.ElementType.Name}`", kvp.Key.Name);

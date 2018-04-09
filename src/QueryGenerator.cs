@@ -30,10 +30,8 @@ namespace MowaInfo.DataPager
                     return $"{name} != @{argIndex}";
 
                 case FilterComparator.Default:
-                    throw new ArgumentOutOfRangeException(nameof(comparator), "");
-
                 case FilterComparator.Custom:
-                    return null;
+                    throw new ArgumentOutOfRangeException(nameof(comparator), "");
 
                 default:
                     throw new NotImplementedException();
